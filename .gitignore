@@ -1,3 +1,6 @@
+*.a
+*.so
+*.o
 *.cma
 *.cmxa
 *.cmi

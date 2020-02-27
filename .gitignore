@@ -6,5 +6,8 @@
 *.cmi
 *.cmo
 *.cmx
+*.cmxs
 *.native
 *.byte
+*.top
+readmeta

@@ -12,12 +12,11 @@
 #
 
 default: lib-a lib-b lib-c lib-d lib-e lib-f lib-missdep use-d use-da use-e \
-         top-use-e top-use-b use-f load load_lib
+         top-use-e top-use-b use-f require
 
 .PHONY: lib-a lib-b lib-c lib-d lib-e lib-f use-d use-e use-f top-use-e \
 	      top-use-b use-da use-e use-f use-da-fail use-da-fail-native use-b-fail \
-        use-b-fail-native use-missdep use-missdep-native load load_lib \
-        clean
+        use-b-fail-native use-missdep use-missdep-native require clean
 
 clean:
 	rm -f */*.cmi */*.cmo */*.cmx */*.cma */*.cmxa */*.cmxs */*.a */*.o */*.so \
@@ -135,24 +134,16 @@ use-missdep-native: lib-missdep
 	ocamlopt -L . -c use_missdep.ml -require missdep
 	ocamlopt -L . -o use_missdep use_missdep.cmx -require missdep
 
-load:
-	ocamlc -L . -o load.byte dynlink.cma load.ml
-	ocamlopt -L . -o load.native dynlink.cmxa load.ml
-	ocamlc -L . -linkall -o load_has_d.byte dynlink.cma load.ml -require d
-	ocamlopt -L . -linkall -o load_has_d.native dynlink.cmxa load.ml -require d
+require:
+	ocamlc -L . -o require.byte dynlink.cma require.ml
+	ocamlopt -L . -o require.native dynlink.cmxa require.ml
+	ocamlc -L . -linkall -o require_has_implicit_a.byte \
+	  dynlink.cma a/lib.cma require.ml -assume-library a
+	ocamlopt -L . -linkall -o require_has_implicit_a.native \
+		dynlink.cmxa a/lib.cmxa require.ml -assume-library a
+	ocamlc -L . -linkall -o require_has_d.byte dynlink.cma require.ml -require d
+	ocamlopt -L . -linkall -o require_has_d.native dynlink.cmxa \
+	  require.ml -require d
 	CAML_LD_LIBRARY_PATH=./f \
-  ocamlc -linkall -o load_has_f.byte dynlink.cma load.ml -require f
-	ocamlopt -linkall -o load_has_f.native dynlink.cmxa load.ml -require f
-
-load_lib:
-	ocamlc -L . -o load_lib.byte dynlink.cma load_lib.ml
-	ocamlopt -L . -linkall -o load_lib.native dynlink.cmxa load_lib.ml
-	ocamlc -L . -linkall -o load_lib_has_d.byte dynlink.cma load_lib.ml -require d
-	ocamlopt -L . -linkall -o load_lib_has_d.native dynlink.cmxa load_lib.ml -require d
-	CAML_LD_LIBRARY_PATH=./f \
-	ocamlc -L . -linkall -o load_lib_has_f.byte dynlink.cma load_lib.ml -require f
-	ocamlopt -L . -linkall -o load_lib_has_f.native dynlink.cmxa load_lib.ml -require f
-	ocamlc -L . -linkall -o load_lib_has_implicit_a.byte \
-	  dynlink.cma a/lib.cma load_lib.ml -assume-require a
-	ocamlopt -L . -linkall -o load_has_implicit_a.native \
-	  dynlink.cmxa a/lib.cmxa load_lib.ml -assume-require a
+  ocamlc -L . -linkall -o require_has_f.byte dynlink.cma require.ml -require f
+	ocamlopt -L . -linkall -o require_has_f.native dynlink.cmxa require.ml -require f

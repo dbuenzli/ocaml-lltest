@@ -1,0 +1,3 @@
+(domain cmark)
+(srcs-x .)
+(srcs-i manual.md)

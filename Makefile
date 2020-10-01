@@ -68,8 +68,7 @@ lib-f: lib-e
 	ocamlopt -L . -c f/f.ml -I f -require e
 	ocamlc -L . -c f/f_stubs.c
 	mv f_stubs.o f/
-	ocamlmklib -o f/lib -oc f/f f/f.cmo f/f.cmx f/f_stubs.o -require e \
-	-ccopt '-L\$$CAMLORIGIN'
+	ocamlmklib -o f/lib -oc f/f f/f.cmo f/f.cmx f/f_stubs.o -require e
 	ocamlopt -linkall -shared -o f/lib.cmxs f/lib.cmxa
 
 lib-missdep:
